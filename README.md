@@ -6,7 +6,7 @@
 🌐 [Leer en Español](README.es.md)
 
 ---
-<img width="1070" height="425" alt="{8C007510-98A7-49C9-93DF-4F40D2D14D2F}" src="https://github.com/user-attachments/assets/b6a91bc2-0b4c-47fc-bdea-65293e07140d" />
+<img width="1065" height="431" alt="{30C7FA08-9126-4B2A-99E1-176256DE8004}" src="https://github.com/user-attachments/assets/55f84e5b-e989-4314-80aa-a89134b8bcdf" />
 
 ## What does it do?
 
