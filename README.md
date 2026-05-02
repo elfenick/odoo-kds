@@ -1,137 +1,139 @@
-# 🍳 Bitópolis KDS — Kitchen Display System para Odoo 19
+# 🍳 Bitópolis KDS — Kitchen Display System for Odoo 19
 
-> **Addon de demostración.** Esta versión está limitada a 1 estación y 2 categorías POS.  
-> Desarrollado y usado en producción por [Bitópolis](https://bitopolis.cc).
+> **Demo addon.** This version is limited to 1 station and 2 POS categories.  
+> Developed and used in production by [Bitópolis](https://bitopolis.cc).
 
----
-
-## ¿Qué hace?
-
-Un Kitchen Display System (KDS) reactivo para Odoo 19 POS, estilo Loyverse. Las órdenes del POS aparecen automáticamente en pantalla de cocina, con cronómetro de colores y marcado por toque o teclado numérico USB.
-
-### Funcionalidades
-
-- **Dashboard en el backend de Odoo** — estación + configuración global de tiempos
-- **Ventana KDS standalone** — se abre en `/kds/ui`, pensada para correr en tablet/TV de cocina
-- **Tiempo real** via `bus.bus` + polling de respaldo configurable
-- **Cronómetro con colores** — verde / amarillo / rojo configurable desde el dashboard
-- **Marcar orden como lista** — por touch en pantalla o teclado numérico USB (`número` + `Enter`)
-- **Bandeja de deshacer** — recupera órdenes marcadas por error
-- **Sonido en nueva orden** — via Web Audio API (configurable)
-- **Filtro por categoría POS** — la estación solo muestra los productos que le corresponden
+🌐 [Leer en Español](README.es.md)
 
 ---
 
-## Limitaciones de esta versión (demo)
+## What does it do?
 
-| Funcionalidad | Esta versión |
+A reactive Kitchen Display System (KDS) for Odoo 19 POS, Loyverse-style. POS orders appear automatically on the kitchen screen, with a color-coded timer and order completion via touch or USB numpad.
+
+### Features
+
+- **Backend dashboard** — station management + global timer configuration
+- **Standalone KDS window** — opens at `/kds/ui`, designed to run on a kitchen tablet/TV
+- **Real-time** via `bus.bus` + configurable fallback polling
+- **Color-coded timer** — green / yellow / red, configurable from the dashboard
+- **Mark order as done** — by touch or USB numpad (`number` + `Enter`)
+- **Undo tray** — recover accidentally completed orders
+- **Sound on new order** — via Web Audio API (configurable)
+- **POS category filter** — station only shows products assigned to it
+
+---
+
+## Limitations (demo version)
+
+| Feature | This version |
 |---|---|
-| Estaciones por empresa | **Máximo 1** |
-| Categorías POS por estación | **Máximo 2** |
-| Crear nuevas estaciones desde el dashboard | ❌ Deshabilitado |
+| Stations per company | **Maximum 1** |
+| POS categories per station | **Maximum 2** |
+| Create new stations from dashboard | ❌ Disabled |
 
 ---
 
-## Requisitos
+## Requirements
 
 - **Odoo 19**
-- Módulos: `base`, `web`, `bus`, `point_of_sale`
-- Opcional: `pos_restaurant` (detección automática de mesa/número de orden)
+- Modules: `base`, `web`, `bus`, `point_of_sale`
+- Optional: `pos_restaurant` (auto-detection of table/order number)
 
 ---
 
-## Instalación
+## Installation
 
 ```bash
-# 1. Clona o copia la carpeta en tu directorio de addons
+# 1. Clone or copy the folder into your Odoo addons directory
 git clone https://github.com/elfenick/odoo-kds /path/to/odoo/addons/bitopolis_kds
 
-# 2. Reinicia Odoo
-sudo systemctl restart odoo   # o tu método habitual
+# 2. Restart Odoo
+sudo systemctl restart odoo
 
-# 3. En Odoo: Configuración → Actualizar lista de aplicaciones
-# 4. Busca "Bitópolis Kitchen Display System" e instala
+# 3. In Odoo: Settings → Update Apps List
+# 4. Search for "Bitópolis Kitchen Display System" and install
 ```
 
 ---
 
-## Uso básico
+## Basic usage
 
-1. En el menú principal aparece la app **Cocina (KDS)**
-2. Abre el dashboard → verás la estación y la configuración global
-3. Click en **▶ Abrir KDS** → se abre `/kds/ui` en una pestaña nueva (úsala en la tablet de cocina)
-4. Las órdenes del POS aparecen automáticamente al pagar
+1. A new **Kitchen (KDS)** app appears in the main menu
+2. Open the dashboard → you'll see the station and global config
+3. Click **▶ Open KDS** → opens `/kds/ui` in a new tab (use this on the kitchen tablet)
+4. POS orders appear automatically after payment
 
-### Marcar orden como lista
+### Completing an order
 
-| Método | Acción |
+| Method | Action |
 |---|---|
-| Touch | Botón verde **"Listo"** en la tarjeta |
-| Teclado numérico USB | Número de orden → `Enter` o `+` |
-| Borrar orden marcada | Número → `-` o `Backspace` |
+| Touch | Green **"Done"** button on the card |
+| USB numpad | Order number → `Enter` or `+` |
+| Undo completed order | Number → `-` or `Backspace` |
 
-### Colores del cronómetro (configurables)
+### Timer colors (configurable)
 
-| Tiempo en cocina | Color |
+| Time in kitchen | Color |
 |---|---|
-| Menos del umbral amarillo | 🟢 Verde |
-| Entre amarillo y rojo | 🟡 Amarillo |
-| Más del umbral rojo | 🔴 Rojo (parpadea) |
+| Below yellow threshold | 🟢 Green |
+| Between yellow and red | 🟡 Yellow |
+| Above red threshold | 🔴 Red (blinking) |
 
 ---
 
-## Configuración
+## Configuration
 
-Desde el **Dashboard → Editar**:
+From the **Dashboard → Edit**:
 
-| Parámetro | Descripción |
+| Setting | Description |
 |---|---|
-| Minutos hasta Amarillo | Tiempo para que la tarjeta cambie a amarillo |
-| Minutos hasta Rojo | Tiempo para que la tarjeta cambie a rojo |
-| Polling de respaldo | Segundos entre polls (mínimo 5s) |
-| Órdenes en bandeja deshacer | Cuántas órdenes recientes se pueden recuperar |
-| Sonido en nueva orden | Activa/desactiva el beep al llegar una orden |
+| Minutes to Yellow | Time before card turns yellow |
+| Minutes to Red | Time before card turns red |
+| Fallback polling | Seconds between polls (minimum 5s) |
+| Undo tray size | How many recent orders can be recovered |
+| Sound on new order | Enable/disable beep when an order arrives |
 
 ---
 
-## Estructura del proyecto
+## Project structure
 
 ```
 bitopolis_kds/
 ├── controllers/
-│   └── main.py              # Rutas HTTP: /kds/ui, /kds/dashboard, /kds/config/save, etc.
+│   └── main.py              # HTTP routes: /kds/ui, /kds/dashboard, /kds/config/save, etc.
 ├── models/
-│   ├── kds_config.py        # Modelo de configuración global
-│   ├── kds_station.py       # Modelo de estación KDS
-│   ├── kds_order.py         # Modelo de orden KDS
-│   ├── kds_order_line.py    # Líneas de orden
-│   ├── kds_order_done.py    # Órdenes completadas (historial)
-│   └── pos_order.py         # Hook en pos.order para crear kds.order automáticamente
+│   ├── kds_config.py        # Global config model
+│   ├── kds_station.py       # KDS station model
+│   ├── kds_order.py         # KDS order model
+│   ├── kds_order_line.py    # Order lines
+│   ├── kds_order_done.py    # Completed orders (history)
+│   └── pos_order.py         # Hook on pos.order to auto-create kds.order
 ├── static/src/
-│   ├── app/                 # OWL app standalone del KDS (/kds/ui)
-│   └── dashboard/           # OWL dashboard del backend de Odoo
+│   ├── app/                 # Standalone KDS OWL app (/kds/ui)
+│   └── dashboard/           # Odoo backend OWL dashboard
 ├── views/
-│   ├── kds_menu_views.xml   # Menús, vistas lista/form de estaciones e historial
-│   └── kds_templates.xml    # Plantilla QWeb para /kds/ui
+│   ├── kds_menu_views.xml   # Menus, station list/form and order history views
+│   └── kds_templates.xml    # QWeb template for /kds/ui
 └── security/
     └── ir.model.access.csv
 ```
 
 ---
 
-## Notas técnicas
+## Technical notes
 
-- Las rutas HTTP usan `sudo()` para evitar problemas de ACL — diseñado para red local
-- El hook de creación está en `pos_order.py` sobreescribiendo `create()` de `pos.order`
-- La detección de campos de mesa/tracking usa `_fields` para ser compatible con distintas versiones de POS
-- El bundle KDS standalone (`bitopolis_kds.assets_kds`) carga `web.assets_web` sin compilar SCSS, compatible con Windows Server
+- HTTP routes use `sudo()` to bypass ACL — designed for local network use
+- The creation hook is in `pos_order.py` overriding `pos.order.create()`
+- Table/tracking field detection uses `_fields` for compatibility across POS versions
+- The standalone KDS bundle (`bitopolis_kds.assets_kds`) loads `web.assets_web` without compiling SCSS — compatible with Windows Server
 
 ---
 
-## Licencia
+## License
 
 [LGPL-3](https://www.gnu.org/licenses/lgpl-3.0.html)
 
 ---
 
-*Hecho con ☕ por [Bitópolis](https://bitopolis.cc) — Tijuana, BC, México*
+*Made with ☕ by [Bitópolis](https://bitopolis.cc) — Tijuana, BC, México*
