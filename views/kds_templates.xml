@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!--
+        Layout standalone /kds/ui.
+
+        Estrategia de assets (definitiva para Windows/Odoo 19):
+
+        1) web.assets_web  t-css="false" t-js="true"
+           → Carga TODO el JS de Odoo (OWL, bus, orm, servicios) en
+             UNA sola instancia. t-css=false evita compilar SCSS y el
+             error de $prefix/Bootstrap en Windows.
+
+        2) bitopolis_kds.assets_kds  t-css="true" t-js="true"
+           → Solo nuestro CSS plano + nuestro JS del KDS.
+           → NO incluye web._assets_core (que tiene SCSS y duplicaría OWL).
+
+        El body tiene id="kds-root" para que OWL monte ahí y no colisione
+        con startWebClient (que intenta montar en document.body).
+    -->
+    <template id="index" name="Bitopolis KDS Index">
+        <html data-color-mode="dark">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+                <title>Bitopolis KDS</title>
+                <link rel="icon" type="image/x-icon"
+                      href="/bitopolis_kds/static/description/icon.png"/>
+                <script type="text/javascript">
+                    odoo = {
+                        csrf_token:     <t t-out="csrf_token"/>,
+                        session_info:   <t t-out="session_info"/>,
+                        kds_station_id: <t t-out="initial_station_id"/>,
+                    };
+                </script>
+                <!-- JS de Odoo (OWL + servicios). t-css=false = sin compilar SCSS -->
+                <t t-call-assets="web.assets_web" t-css="false" t-js="true"/>
+                <!-- Nuestro CSS plano + JS del KDS -->
+                <t t-call-assets="bitopolis_kds.assets_kds" t-css="true"  t-js="false"/>
+                <t t-call-assets="bitopolis_kds.assets_kds" t-css="false" t-js="true"/>
+            </head>
+            <body class="o_kds_body">
+                <!-- kds_main.js monta KdsApp aqui -->
+                <div id="kds-root"/>
+            </body>
+        </html>
+    </template>
+</odoo>

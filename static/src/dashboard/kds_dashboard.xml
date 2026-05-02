@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="bitopolis_kds.Dashboard">
+    <div class="o_kds_dashboard">
+
+        <!-- =================== HERO ======================== -->
+        <div class="o_kds_dash_hero">
+            <div class="o_kds_dash_hero_left">
+                <div class="o_kds_dash_hero_icon">🍳</div>
+                <div class="o_kds_dash_hero_text">
+                    <h1>Bitópolis KDS</h1>
+                    <p>Kitchen Display System — Panel de Control</p>
+                </div>
+            </div>
+            <div class="o_kds_dash_hero_stats">
+                <div class="o_kds_dash_stat">
+                    <span class="o_kds_dash_stat_num"
+                          t-att-class="'o_kds_dash_stat_num ' + pendingClass"
+                          t-esc="state.totalPending"/>
+                    <span class="o_kds_dash_stat_label">Pendientes</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =================== BODY ======================== -->
+        <div class="o_kds_dash_body">
+
+            <!-- Loading -->
+            <div t-if="state.loading" class="o_kds_dash_loading">
+                <span>⏳</span> Cargando...
+            </div>
+
+            <t t-else="">
+
+                <!-- ========= ESTACIONES ========= -->
+                <div class="o_kds_dash_section">
+                    <div class="o_kds_dash_section_header">
+                        <h2 class="o_kds_dash_section_title">📺 Estaciones</h2>
+                        <button class="o_kds_dash_section_action"
+                                t-on-click="openStationsList">
+                            Configurar estación →
+                        </button>
+                    </div>
+
+                    <div class="o_kds_dash_station_grid">
+
+                        <!-- Tarjeta: Sin filtro (siempre visible) -->
+                        <div class="o_kds_dash_station_card">
+                            <div class="o_kds_dash_station_card_top">
+                                <div class="o_kds_dash_station_card_icon_row">
+                                    <div class="o_kds_dash_station_icon">🖥️</div>
+                                    <div class="o_kds_dash_station_pending">
+                                        <span class="o_kds_dash_station_pending_num"
+                                              t-att-class="'o_kds_dash_station_pending_num ' + pendingClass"
+                                              t-esc="state.totalPending"/>
+                                        <span class="o_kds_dash_station_pending_label">pendientes</span>
+                                    </div>
+                                </div>
+                                <div class="o_kds_dash_station_name">Vista General</div>
+                                <div class="o_kds_dash_station_cats">
+                                    <span class="o_kds_dash_cat_all">Todas las órdenes</span>
+                                </div>
+                            </div>
+                            <button class="o_kds_dash_open_btn"
+                                    t-on-click="() => this.openKds(null)">
+                                ▶ Abrir KDS
+                            </button>
+                        </div>
+
+                        <!-- Tarjeta por estación -->
+                        <t t-foreach="state.stations" t-as="station" t-key="station.id">
+                            <div class="o_kds_dash_station_card">
+                                <div class="o_kds_dash_station_card_top">
+                                    <div class="o_kds_dash_station_card_icon_row">
+                                        <div class="o_kds_dash_station_icon">📺</div>
+                                        <div class="o_kds_dash_station_pending">
+                                            <span class="o_kds_dash_station_pending_num"
+                                                  t-att-class="station.pending > 0 ? 'o_kds_dash_station_pending_num has-orders' : 'o_kds_dash_station_pending_num'"
+                                                  t-esc="station.pending"/>
+                                            <span class="o_kds_dash_station_pending_label">pendientes</span>
+                                        </div>
+                                    </div>
+                                    <div class="o_kds_dash_station_name" t-esc="station.name"/>
+                                    <div class="o_kds_dash_station_cats">
+                                        <t t-if="station.show_all || !station.category_names.length">
+                                            <span class="o_kds_dash_cat_all">Todas las categorías</span>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-foreach="station.category_names" t-as="cat" t-key="cat">
+                                                <span class="o_kds_dash_cat_pill" t-esc="cat"/>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </div>
+                                <button class="o_kds_dash_open_btn"
+                                        t-on-click="() => this.openKds(station.id)">
+                                    ▶ Abrir KDS
+                                </button>
+                            </div>
+                        </t>
+
+                        <!-- Empty state: no hay estaciones -->
+                        <t t-if="state.stations.length === 0">
+                            <div class="o_kds_dash_empty_stations">
+                                <div class="o_kds_dash_empty_icon">📺</div>
+                                <div class="o_kds_dash_empty_title">Sin estaciones configuradas</div>
+                                <div class="o_kds_dash_empty_sub">
+                                    Crea estaciones para filtrar órdenes por área de cocina
+                                </div>
+
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+
+                <!-- ========= CONFIGURACIÓN ========= -->
+                <div class="o_kds_dash_section">
+                    <div class="o_kds_dash_section_header">
+                        <h2 class="o_kds_dash_section_title">⚙️ Configuración Global</h2>
+                        <button class="o_kds_dash_section_action"
+                                t-on-click="toggleConfigEditor">
+                            <t t-if="state.showConfig">Cerrar ✕</t>
+                            <t t-else="">Editar →</t>
+                        </button>
+                    </div>
+
+                    <!-- Resumen de config (siempre visible) -->
+                    <div class="o_kds_dash_config_strip">
+                        <div class="o_kds_dash_config_items">
+                            <t t-foreach="configSummaryItems" t-as="item" t-key="item.label">
+                                <div class="o_kds_dash_config_item">
+                                    <span t-esc="item.icon"/>
+                                    <span><strong t-esc="item.label"/>: <t t-esc="item.value"/></span>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="o_kds_dash_config_actions">
+                            <button class="o_kds_dash_btn_secondary"
+                                    t-on-click="openOrderHistory">
+                                📋 Historial de órdenes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Editor inline de configuración -->
+                    <div t-if="state.showConfig" class="o_kds_dash_config_editor">
+                        <div class="o_kds_dash_config_grid">
+
+                            <div class="o_kds_dash_field">
+                                <label>🟡 Minutos hasta Amarillo</label>
+                                <input type="range" min="1" max="30"
+                                       t-model.number="state.form.warn_minutes"/>
+                                <span class="o_kds_dash_field_value"
+                                      t-esc="state.form.warn_minutes + ' min'"/>
+                            </div>
+
+                            <div class="o_kds_dash_field">
+                                <label>🔴 Minutos hasta Rojo</label>
+                                <input type="range" min="2" max="60"
+                                       t-model.number="state.form.danger_minutes"/>
+                                <span class="o_kds_dash_field_value"
+                                      t-esc="state.form.danger_minutes + ' min'"/>
+                            </div>
+
+                            <div class="o_kds_dash_field">
+                                <label>⏱ Polling de respaldo (seg)</label>
+                                <input type="number" min="5" max="120"
+                                       t-model.number="state.form.poll_interval"/>
+                            </div>
+
+                            <div class="o_kds_dash_field">
+                                <label>↩ Órdenes en bandeja deshacer</label>
+                                <input type="number" min="1" max="20"
+                                       t-model.number="state.form.undo_count"/>
+                            </div>
+
+                            <div class="o_kds_dash_field">
+                                <label>🔔 Sonido en nueva orden</label>
+                                <div class="o_kds_dash_toggle_row">
+                                    <span t-esc="state.form.sound_enabled ? 'Activado' : 'Desactivado'"/>
+                                    <button class="o_kds_dash_toggle"
+                                            t-att-class="state.form.sound_enabled ? 'o_kds_dash_toggle on' : 'o_kds_dash_toggle'"
+                                            t-on-click="() => state.form.sound_enabled = !state.form.sound_enabled">
+                                        <div class="o_kds_dash_toggle_knob"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="o_kds_dash_config_footer">
+                            <span t-if="state.saved" class="o_kds_dash_saved_badge">
+                                ✓ Configuración guardada
+                            </span>
+                            <button class="o_kds_dash_cancel_btn"
+                                    t-on-click="toggleConfigEditor"
+                                    t-att-disabled="state.saving">
+                                Cancelar
+                            </button>
+                            <button class="o_kds_dash_save_btn"
+                                    t-on-click="saveConfig"
+                                    t-att-disabled="state.saving">
+                                <t t-if="state.saving">Guardando...</t>
+                                <t t-else="">✓ Guardar</t>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bitopolis_kds.KdsApp">
+        <div class="o_kds_app">
+
+            <!-- ===================== HEADER ========================= -->
+            <header class="o_kds_header">
+                <div class="o_kds_brand">
+                    <span class="o_kds_logo">🍳</span>
+                    <div class="o_kds_brand_text">
+                        <span class="o_kds_title">Bitópolis KDS</span>
+                        <span t-if="state.stationLabel"
+                              class="o_kds_station_badge"
+                              t-esc="state.stationLabel"/>
+                    </div>
+                </div>
+
+                <div class="o_kds_stats">
+                    <div class="o_kds_stat">
+                        <span class="o_kds_stat_value" t-esc="pendingCount"/>
+                        <span class="o_kds_stat_label">Pendientes</span>
+                    </div>
+                    <div class="o_kds_stat">
+                        <span class="o_kds_stat_value" t-esc="currentTimeLabel"/>
+                        <span class="o_kds_stat_label">Hora</span>
+                    </div>
+                    <div class="o_kds_stat"
+                         t-att-class="{ 'o_kds_disconnected': !state.connected }">
+                        <span class="o_kds_stat_dot"/>
+                        <span class="o_kds_stat_label">
+                            <t t-if="state.connected">Conectado</t>
+                            <t t-else="">Reconectando</t>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="o_kds_header_actions">
+                    <!-- Numpad indicator -->
+                    <div class="o_kds_keypad_indicator"
+                         t-att-class="{ 'o_kds_keypad_active': state.keypadBuffer }">
+                        <span class="o_kds_keypad_label">⌨ #</span>
+                        <span class="o_kds_keypad_buffer"
+                              t-esc="state.keypadBuffer || '_'"/>
+                    </div>
+
+                    <!-- Bandeja deshacer -->
+                    <button class="o_kds_header_btn"
+                            t-att-class="{ 'o_kds_header_btn_active': state.showUndoTray }"
+                            t-on-click="() => state.showUndoTray = !state.showUndoTray"
+                            title="Deshacer (tecla −)">
+                        ↩
+                        <span t-if="state.recentlyDone.length > 0"
+                              class="o_kds_header_btn_badge"
+                              t-esc="state.recentlyDone.length"/>
+                    </button>
+                </div>
+            </header>
+
+            <!-- =================== UNDO TRAY ======================== -->
+            <div t-if="state.showUndoTray and state.recentlyDone.length > 0"
+                 class="o_kds_undo_tray">
+                <div class="o_kds_undo_tray_label">
+                    ↩ Órdenes completadas · tecla <b>−</b> para deshacer la última
+                </div>
+                <div class="o_kds_undo_list">
+                    <t t-foreach="state.recentlyDone" t-as="order" t-key="order.done_id || order.id">
+                        <div class="o_kds_undo_card">
+                            <span class="o_kds_undo_num">
+                                #<t t-esc="order.tracking_number or order.name"/>
+                            </span>
+                            <span t-if="order.table_name"
+                                  class="o_kds_undo_table"
+                                  t-esc="'Mesa ' + order.table_name"/>
+                            <button class="o_kds_undo_btn"
+                                    t-on-click="() => this.reopenOrder(order.done_id || order.id)">
+                                ↩ Deshacer
+                            </button>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- ==================== GRID ============================ -->
+            <main class="o_kds_grid">
+                <t t-if="state.orders.length === 0">
+                    <div class="o_kds_empty">
+                        <div class="o_kds_empty_icon">🍽️</div>
+                        <div class="o_kds_empty_title">Todo al día</div>
+                        <div class="o_kds_empty_subtitle">
+                            Las nuevas órdenes aparecerán aquí automáticamente.
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <t t-foreach="state.orders" t-as="order" t-key="order.id">
+                        <OrderCard
+                            order="order"
+                            now="state.now"
+                            warnSeconds="state.warnSeconds"
+                            dangerSeconds="state.dangerSeconds"
+                            onComplete.bind="completeOrder"/>
+                    </t>
+                </t>
+            </main>
+
+            <!-- =================== FOOTER =========================== -->
+            <footer class="o_kds_footer">
+                <span class="o_kds_footer_hint">
+                    Touch: pulsa <b>Listo</b> ·
+                    Numpad: número + <b>Enter</b> o <b>+</b> para completar ·
+                    <b>−</b> para deshacer la última
+                </span>
+            </footer>
+
+        </div>
+    </t>
+
+</templates>

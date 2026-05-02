@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bitopolis_kds.OrderCard">
+        <article t-att-class="cardClass">
+
+            <!-- ========== CABECERA ========== -->
+            <header class="o_kds_card_header">
+                <div class="o_kds_card_tracking">
+                    <span class="o_kds_card_hash">#</span>
+                    <span class="o_kds_card_tracking_value">
+                        <t t-esc="props.order.tracking_number || props.order.name"/>
+                    </span>
+                </div>
+                <div class="o_kds_card_meta">
+                    <div t-if="props.order.table_name" class="o_kds_card_table">
+                        <span>🪑</span>
+                        <span t-esc="props.order.table_name"/>
+                    </div>
+                    <div class="o_kds_card_timer"
+                         t-att-class="'o_kds_card_timer_' + severity">
+                        <t t-esc="elapsedLabel"/>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ====== NOTA GENERAL DE LA ORDEN ====== -->
+            <div t-if="props.order.note" class="o_kds_card_general_note">
+                <span class="o_kds_card_general_note_label">📋 Nota:</span>
+                <span t-esc="props.order.note"/>
+            </div>
+
+            <!-- ========== LÍNEAS ========== -->
+            <ul class="o_kds_card_lines">
+                <t t-foreach="props.order.lines" t-as="line" t-key="line.id">
+                    <li class="o_kds_card_line"
+                        t-att-class="{ 'o_kds_card_line_has_note': line.note }">
+
+                        <div class="o_kds_card_line_main">
+                            <span class="o_kds_card_line_qty">
+                                <t t-esc="line.qty % 1 === 0 ? line.qty : line.qty.toFixed(2)"/>×
+                            </span>
+                            <span class="o_kds_card_line_name" t-esc="line.product_name"/>
+                        </div>
+
+                        <!-- Variante/atributos -->
+                        <div t-if="line.attribute_names"
+                             class="o_kds_card_line_variant">
+                            <t t-esc="line.attribute_names"/>
+                        </div>
+
+                        <!-- Nota de preparación — bloque destacado -->
+                        <div t-if="line.note" class="o_kds_card_line_note">
+                            <span class="o_kds_card_line_note_icon">✏️</span>
+                            <span t-esc="line.note"/>
+                        </div>
+
+                    </li>
+                </t>
+            </ul>
+
+            <!-- ========== BOTÓN LISTO ========== -->
+            <footer class="o_kds_card_footer">
+                <button class="o_kds_card_done_btn"
+                        t-on-click="onCompleteClick">
+                    <span class="o_kds_card_done_icon">✓</span>
+                    <span class="o_kds_card_done_label">Listo</span>
+                </button>
+            </footer>
+
+        </article>
+    </t>
+
+</templates>
