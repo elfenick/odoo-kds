@@ -46,8 +46,8 @@ Plug & play. Cero configuración.
 
 ## Soporte y compra de licencia
 
-[bitopolis.cc](https://bitopolis.cc)
-[Versión premium](https://tienda.bitopolis.cc/kitchen-display-system)
+- [bitopolis.cc](https://bitopolis.cc)
+- [Versión premium](https://tienda.bitopolis.cc/kitchen-display-system)
 
 ## Licencia
 
