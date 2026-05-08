@@ -31,6 +31,7 @@
                         csrf_token:     <t t-out="csrf_token"/>,
                         session_info:   <t t-out="session_info"/>,
                         kds_station_id: <t t-out="initial_station_id"/>,
+                        kds_station_token: <t t-out="station_token"/>,
                     };
                 </script>
                 <!-- JS de Odoo (OWL + servicios). t-css=false = sin compilar SCSS -->

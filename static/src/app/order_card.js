@@ -4,11 +4,12 @@ import { Component } from "@odoo/owl";
 export class OrderCard extends Component {
     static template = "bitopolis_kds.OrderCard";
     static props = {
-        order: Object,
-        now: Number,
-        warnSeconds: Number,
+        order:        Object,
+        now:          Number,
+        warnSeconds:  Number,
         dangerSeconds: Number,
-        onComplete: Function,
+        onComplete:   Function,
+        isSelected:   { type: Boolean, optional: true },
     };
 
     get sentAtMs() {
@@ -44,6 +45,8 @@ export class OrderCard extends Component {
     get cardClass() {
         const cls = ["o_kds_card", `o_kds_card_${this.severity}`];
         if (this.props.order._removing) cls.push("o_kds_card_removing");
+        if (this.props.isSelected)      cls.push("o_kds_card_selected");
+        if (this.props.order._recalled) cls.push("o_kds_card_recalled");
         return cls.join(" ");
     }
 

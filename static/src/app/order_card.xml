@@ -2,10 +2,14 @@
 <templates xml:space="preserve">
 
     <t t-name="bitopolis_kds.OrderCard">
-        <article t-att-class="cardClass">
+        <article t-att-class="cardClass" t-att-data-order-id="props.order.id">
 
             <!-- ========== CABECERA ========== -->
             <header class="o_kds_card_header">
+                <!-- Badge RECALL: posición absoluta esquina superior derecha -->
+                <div t-if="props.order._recalled" class="o_kds_card_recall_badge">
+                    ↩ RECALL
+                </div>
                 <div class="o_kds_card_tracking">
                     <span class="o_kds_card_hash">#</span>
                     <span class="o_kds_card_tracking_value">

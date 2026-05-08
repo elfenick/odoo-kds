@@ -150,7 +150,7 @@ class KdsOrder(models.Model):
     @api.model
     def kds_get_active_orders(self, station_id=None):
         """Devuelve órdenes pendientes, opcionalmente filtradas por estación."""
-        orders = self.search([('state', '=', 'pending')], order='sent_at asc, id asc')
+        orders = self.search([('state', '=', 'pending')], order='sent_at desc, id desc')
         station = None
         if station_id:
             station = self.env['kds.station'].browse(int(station_id)).exists()
@@ -223,7 +223,7 @@ class KdsOrder(models.Model):
         station = None
         if station_id:
             station = self.env['kds.station'].browse(int(station_id)).exists()
-        orders = self.search([('state', '=', 'pending'), ('tracking_number', '=', str(tracking))], order='sent_at asc, id asc')
+        orders = self.search([('state', '=', 'pending'), ('tracking_number', '=', str(tracking))], order='sent_at desc, id desc')
         for order in orders:
             if order.kds_complete(order.id, station.id if station else False):
                 return order.id

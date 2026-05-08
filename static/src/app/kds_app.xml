@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="bitopolis_kds.KdsApp">
-        <div class="o_kds_app">
+        <div class="o_kds_app" t-att-style="fontSizeStyle">
 
             <!-- ===================== HEADER ========================= -->
             <header class="o_kds_header">
@@ -36,19 +36,17 @@
                 </div>
 
                 <div class="o_kds_header_actions">
-                    <!-- Numpad indicator -->
-                    <div class="o_kds_keypad_indicator"
-                         t-att-class="{ 'o_kds_keypad_active': state.keypadBuffer }">
-                        <span class="o_kds_keypad_label">⌨ #</span>
-                        <span class="o_kds_keypad_buffer"
-                              t-esc="state.keypadBuffer || '_'"/>
+                    <!-- Solo la orden seleccionada (sin indicador de teclas) -->
+                    <div class="o_kds_nav_indicator"
+                         t-att-class="{ 'o_kds_nav_active': pendingCount > 0 }">
+                        <span class="o_kds_nav_value" t-esc="selectedOrderLabel"/>
                     </div>
 
                     <!-- Bandeja deshacer -->
                     <button class="o_kds_header_btn"
                             t-att-class="{ 'o_kds_header_btn_active': state.showUndoTray }"
                             t-on-click="() => state.showUndoTray = !state.showUndoTray"
-                            title="Deshacer (tecla −)">
+                            title="Deshacer">
                         ↩
                         <span t-if="state.recentlyDone.length > 0"
                               class="o_kds_header_btn_badge"
@@ -57,12 +55,49 @@
                 </div>
             </header>
 
+            <!-- ========= BANNER DESCONEXIÓN =================== -->
+            <t t-if="!state.connected">
+                <div class="o_kds_disconnection_banner">
+                    ⚠️ Sin conexión — reconectando...
+                </div>
+            </t>
+
+
+            <!-- ========== ESTACIÓN ELIMINADA/INVÁLIDA ============= -->
+            <t t-if="state.stationInvalid">
+                <div class="o_kds_license_block">
+                    <div class="o_kds_license_block_box">
+                        <div class="o_kds_license_block_icon">📺</div>
+                        <h2>KDS no disponible</h2>
+                        <p>Esta pantalla fue eliminada o desactivada.</p>
+                        <p class="o_kds_license_block_hint">
+                            Contacta al administrador para obtener<br/>
+                            un nuevo enlace de acceso.
+                        </p>
+                    </div>
+                </div>
+            </t>
+
+
+            <t t-if="!state.licenseValid and !state.stationInvalid">
+                <div class="o_kds_license_block">
+                    <div class="o_kds_license_block_box">
+                        <div class="o_kds_license_block_icon">🔒</div>
+                        <h2>Licencia requerida</h2>
+                        <p>Este módulo requiere una licencia válida para funcionar.</p>
+                        <p>Contacta a <strong>bitopolis.cc</strong> para adquirir tu licencia.</p>
+                        <p class="o_kds_license_block_hint">
+                            Actívala en <strong>Cocina → Licencia → Validar</strong>
+                        </p>
+                    </div>
+                </div>
+            </t>
+
+
             <!-- =================== UNDO TRAY ======================== -->
             <div t-if="state.showUndoTray and state.recentlyDone.length > 0"
                  class="o_kds_undo_tray">
-                <div class="o_kds_undo_tray_label">
-                    ↩ Órdenes completadas · tecla <b>−</b> para deshacer la última
-                </div>
+                <div class="o_kds_undo_tray_label">↩ Órdenes completadas</div>
                 <div class="o_kds_undo_list">
                     <t t-foreach="state.recentlyDone" t-as="order" t-key="order.done_id || order.id">
                         <div class="o_kds_undo_card">
@@ -73,7 +108,7 @@
                                   class="o_kds_undo_table"
                                   t-esc="'Mesa ' + order.table_name"/>
                             <button class="o_kds_undo_btn"
-                                    t-on-click="() => this.reopenOrder(order.done_id || order.id)">
+                                    t-on-click="() => this.reopenOrderWithLimit(order.done_id || order.id)">
                                 ↩ Deshacer
                             </button>
                         </div>
@@ -81,6 +116,7 @@
                 </div>
             </div>
 
+            <t t-if="state.licenseValid">
             <!-- ==================== GRID ============================ -->
             <main class="o_kds_grid">
                 <t t-if="state.orders.length === 0">
@@ -99,6 +135,7 @@
                             now="state.now"
                             warnSeconds="state.warnSeconds"
                             dangerSeconds="state.dangerSeconds"
+                            isSelected="order.id === selectedOrderId"
                             onComplete.bind="completeOrder"/>
                     </t>
                 </t>
@@ -107,12 +144,15 @@
             <!-- =================== FOOTER =========================== -->
             <footer class="o_kds_footer">
                 <span class="o_kds_footer_hint">
-                    Touch: pulsa <b>Listo</b> ·
-                    Numpad: número + <b>Enter</b> o <b>+</b> para completar ·
-                    <b>−</b> para deshacer la última
+                    Touch: <b>Listo</b> ·
+                    <b><t t-esc="keyLabel(state.bindings.key_nav_up)"/></b> /
+                    <b><t t-esc="keyLabel(state.bindings.key_nav_down)"/></b> navegar ·
+                    <b><t t-esc="keyLabel(state.bindings.key_complete)"/></b> completar ·
+                    <b><t t-esc="keyLabel(state.bindings.key_undo)"/></b> deshacer
                 </span>
             </footer>
 
+        </t>
         </div>
     </t>
 

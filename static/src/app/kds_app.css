@@ -1,3 +1,35 @@
+
+/* Banner desconexión */
+.o_kds_disconnection_banner {
+    background: #dc2626;
+    color: #fff;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    animation: kds_blink 1.5s ease-in-out infinite;
+}
+@keyframes kds_blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+}
+
+.o_kds_license_block {
+    position: fixed; inset: 0; background: #0f1115;
+    display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.o_kds_license_block_box {
+    background: #1d2230; border: 1px solid #374151; border-radius: 20px;
+    padding: 48px 56px; text-align: center; max-width: 460px; color: #f9fafb;
+}
+.o_kds_license_block_icon { font-size: 64px; margin-bottom: 20px; }
+.o_kds_license_block_box h2 { font-size: 26px; font-weight: 800; margin: 0 0 12px; color: #fff; }
+.o_kds_license_block_box p { font-size: 15px; color: #9ca3af; margin: 0 0 10px; line-height: 1.5; }
+.o_kds_license_block_box strong { color: #10b981; }
+.o_kds_license_block_hint { margin-top: 20px !important; background: #111827; border-radius: 10px; padding: 12px 16px; font-size: 13px !important; }
+
 /* ==========================================================================
    Bitópolis KDS v2 — CSS puro (sin SCSS, sin compilador)
    ========================================================================== */
@@ -172,8 +204,8 @@ body.o_kds_body {
     padding: 0 3px;
 }
 
-/* Numpad indicator */
-.o_kds_keypad_indicator {
+/* Nav indicator */
+.o_kds_nav_indicator {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -181,20 +213,23 @@ body.o_kds_body {
     background: var(--kds-surface);
     border: 1px solid var(--kds-border);
     border-radius: var(--kds-radius-sm);
-    opacity: 0.55;
+    opacity: 0.45;
     transition: all 0.2s ease;
 }
-.o_kds_keypad_indicator.o_kds_keypad_active {
+.o_kds_nav_indicator.o_kds_nav_active {
     opacity: 1;
     border-color: var(--kds-ok-accent);
     background: rgba(52,211,153,0.08);
-    box-shadow: 0 0 0 3px rgba(52,211,153,0.12);
 }
-.o_kds_keypad_label { font-size: 12px; color: var(--kds-text-dim); }
-.o_kds_keypad_buffer {
-    font-size: 16px; font-weight: 700;
-    min-width: 36px; text-align: center;
+/* nav_arrows removed */
+/* nav_label removed */
+.o_kds_nav_value {
+    font-size: 20px;
+    font-weight: 900;
     font-variant-numeric: tabular-nums;
+    color: var(--kds-text);
+    min-width: 60px;
+    text-align: center;
 }
 
 /* ==========================================================================
@@ -255,16 +290,15 @@ body.o_kds_body {
    GRID DE TARJETAS
    ========================================================================== */
 .o_kds_grid {
-    flex: 1;           /* ocupa todo el espacio restante */
-    min-height: 0;     /* crítico: sin esto flex no permite overflow-y en hijo */
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 14px;
-    padding: 16px;
+    flex: 1;
     overflow-y: auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-auto-rows: min-content;
+    gap: 14px;
     align-content: start;
-    align-items: start;   /* cada tarjeta solo tan alta como su contenido */
-    background: var(--kds-bg);
+    align-items: start;     /* cards DON'T stretch to match tallest in row */
 }
 
 /* Estado vacío */
@@ -307,9 +341,13 @@ body.o_kds_body {
     animation: kds-danger-pulse 2.2s ease-in-out infinite;
 }
 .o_kds_card_removing {
-    opacity: 0;
-    transform: scale(0.94) translateY(-4px);
-    pointer-events: none;
+    display: none;  /* eliminación inmediata, sin animación */
+}
+.o_kds_card_selected {
+    outline: 3px solid var(--kds-ok-accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(52,211,153,0.20), var(--kds-shadow-lg);
+    transform: translateY(-2px);
 }
 
 /* Cabecera de tarjeta */
@@ -388,8 +426,16 @@ body.o_kds_body {
 }
 .o_kds_card_line_name { font-weight: 600; color: var(--kds-text); flex: 1; }
 .o_kds_card_line_variant {
-    margin-top: 3px; margin-left: 42px;
-    font-size: 12px; color: var(--kds-text-dim); font-style: italic;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px; margin-left: 42px;
+    font-size: 12px;
+    font-weight: 800;
+    font-style: normal;
+    color: #ff6b35;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
 }
 
 /* Nota de preparación — bloque destacado */
@@ -397,17 +443,18 @@ body.o_kds_body {
     display: flex;
     align-items: flex-start;
     gap: 6px;
-    margin-top: 6px; margin-left: 42px;
-    padding: 6px 10px;
-    background: rgba(251,191,36,0.14);
-    border: 1px solid rgba(245,158,11,0.35);
-    border-radius: var(--kds-radius-xs);
+    margin-top: 7px; margin-left: 42px;
+    padding: 7px 12px;
+    background: rgba(251,191,36,0.18);
+    border-left: 4px solid #f59e0b;
+    border-radius: 0 6px 6px 0;
     font-size: 13px;
-    color: var(--kds-warn-accent);
-    font-weight: 700;
-    line-height: 1.3;
+    color: #fbbf24;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.2px;
 }
-.o_kds_card_line_note_icon { flex-shrink: 0; font-size: 14px; }
+.o_kds_card_line_note_icon { flex-shrink: 0; font-size: 15px; }
 
 /* Botón Listo */
 .o_kds_card_footer {
@@ -663,4 +710,383 @@ body.o_kds_body {
 .o_kds_card_lines::-webkit-scrollbar-thumb,
 .o_kds_settings_body::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.08); border-radius: 3px;
+}
+
+/* Nav indicator */
+/* nav_sep removed */
+
+/* ==========================================================================
+   KEY CONFIG PANEL
+   ========================================================================== */
+.o_kds_keyconfig_panel {
+    background: var(--kds-bg-soft);
+    border-bottom: 1px solid var(--kds-border);
+    padding: 14px 20px;
+    flex-shrink: 0;
+    animation: kds-slide-down 0.18s ease;
+}
+.o_kds_keyconfig_header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.o_kds_keyconfig_title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--kds-text-dim);
+}
+.o_kds_keyconfig_hint {
+    font-size: 12px;
+    color: var(--kds-text-mute);
+}
+.o_kds_keyconfig_hint b { color: var(--kds-text-dim); }
+
+.o_kds_keyconfig_rows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.o_kds_keyconfig_row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--kds-surface);
+    border: 1px solid var(--kds-border);
+    border-radius: var(--kds-radius-sm);
+    min-width: 260px;
+    flex: 1;
+    transition: border-color 0.15s;
+}
+.o_kds_keyconfig_row.o_kds_keyconfig_capturing {
+    border-color: var(--kds-ok-accent);
+    background: rgba(52,211,153,0.07);
+    animation: kds-pulse 0.9s ease-in-out infinite;
+}
+.o_kds_keyconfig_icon {
+    font-size: 18px;
+    min-width: 22px;
+    text-align: center;
+}
+.o_kds_keyconfig_label {
+    flex: 1;
+    font-size: 13px;
+    color: var(--kds-text-dim);
+}
+.o_kds_keyconfig_key {
+    min-width: 80px;
+    text-align: center;
+}
+.o_kds_keyconfig_key kbd {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--kds-surface-2);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--kds-ok-accent);
+    white-space: nowrap;
+}
+.o_kds_keyconfig_waiting {
+    font-size: 12px;
+    color: var(--kds-ok-accent);
+    font-style: italic;
+    animation: kds-pulse 0.9s ease-in-out infinite;
+}
+.o_kds_keyconfig_btn {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--kds-border);
+    border-radius: var(--kds-radius-xs);
+    color: var(--kds-text-mute);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.o_kds_keyconfig_btn:hover {
+    border-color: var(--kds-ok-accent);
+    color: var(--kds-ok-accent);
+}
+.o_kds_keyconfig_footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+.o_kds_keyconfig_reset {
+    background: none;
+    border: 1px solid var(--kds-border);
+    border-radius: var(--kds-radius-xs);
+    color: var(--kds-text-mute);
+    font-size: 12px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.o_kds_keyconfig_reset:hover {
+    color: var(--kds-warn-accent);
+    border-color: var(--kds-warn-strong);
+}
+
+/* ==========================================================================
+   RECALLED CARD
+   ========================================================================== */
+.o_kds_card_recalled {
+    border-left-color: #f59e0b !important;
+    background: linear-gradient(160deg, var(--kds-surface) 40%, rgba(74,58,18,0.6) 100%) !important;
+}
+
+.o_kds_card_recall_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    background: rgba(245,158,11,0.20);
+    border: 1px solid var(--kds-warn-strong);
+    border-radius: var(--kds-radius-xs);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--kds-warn-accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: kds-recall-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes kds-recall-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+    50%       { opacity: 0.85; box-shadow: 0 0 0 4px rgba(245,158,11,0.0); }
+}
+
+
+/* ==========================================================================
+   FONT SIZE — Controlled via --kds-card-font-base CSS variable (default 17px)
+   All text inside cards scales proportionally from this base.
+   ========================================================================== */
+.o_kds_app {
+    --kds-card-font-base: 17px;   /* overridden inline from JS on .o_kds_app */
+}
+
+/* Número de orden — escala mayor sobre la base */
+.o_kds_card .o_kds_card_tracking_value {
+    font-size: calc(var(--kds-card-font-base) * 3.0);
+}
+.o_kds_card .o_kds_card_hash {
+    font-size: calc(var(--kds-card-font-base) * 1.2);
+}
+
+/* Timer */
+.o_kds_card .o_kds_card_timer {
+    font-size: calc(var(--kds-card-font-base) * 0.88);
+    padding: 3px 8px;
+}
+
+/* Líneas de productos */
+.o_kds_card .o_kds_card_line_main {
+    font-size: var(--kds-card-font-base);
+    gap: calc(var(--kds-card-font-base) * 0.5);
+}
+.o_kds_card .o_kds_card_line_qty {
+    font-size: calc(var(--kds-card-font-base) * 1.1);
+    min-width: calc(var(--kds-card-font-base) * 2);
+}
+.o_kds_card .o_kds_card_line_name {
+    font-size: var(--kds-card-font-base);
+}
+.o_kds_card .o_kds_card_line_variant {
+    font-size: calc(var(--kds-card-font-base) * 0.78);
+    margin-left: calc(var(--kds-card-font-base) * 2);
+}
+.o_kds_card .o_kds_card_line_note {
+    font-size: calc(var(--kds-card-font-base) * 0.85);
+    margin-left: calc(var(--kds-card-font-base) * 2);
+}
+.o_kds_card .o_kds_card_lines {
+    gap: calc(var(--kds-card-font-base) * 0.55);
+}
+
+/* Badge recall */
+.o_kds_card .o_kds_card_recall_badge {
+    font-size: calc(var(--kds-card-font-base) * 0.7);
+}
+
+/* Tabla / mesa */
+.o_kds_card .o_kds_card_table {
+    font-size: calc(var(--kds-card-font-base) * 0.82);
+}
+
+/* ==========================================================================
+   CARD LAYOUT FIXES — font size scales content but NOT order number or timer
+   ========================================================================== */
+
+/* Grid fits content, no overflow */
+.o_kds_card {
+    display: flex;
+    flex-direction: column;
+    height: auto;           /* card grows with content */
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Order number: fixed size, slightly smaller so RECALL badge never overlaps */
+.o_kds_card .o_kds_card_tracking_value {
+    font-size: 44px !important;
+    line-height: 1;
+}
+.o_kds_card .o_kds_card_hash {
+    font-size: 18px !important;
+    line-height: 1;
+}
+
+/* Card internal padding — not cut off at edges */
+.o_kds_card {
+    padding: 14px 14px 0 14px !important;
+}
+.o_kds_card_footer {
+    padding: 0 0 0 0;
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+/* Timer badge: fixed, always visible, flex-shrink: 0 */
+.o_kds_card .o_kds_card_timer {
+    font-size: 13px !important;
+    padding: 3px 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Card header: flex, never collapses timer */
+.o_kds_card_header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+.o_kds_card_tracking {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    min-width: 0;
+    flex-shrink: 1;
+}
+.o_kds_card_meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Lines: use font variable for product names */
+.o_kds_card .o_kds_card_line_main {
+    font-size: var(--kds-card-font-base);
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--kds-card-font-base) * 0.45);
+}
+.o_kds_card .o_kds_card_line_qty {
+    font-size: calc(var(--kds-card-font-base) * 1.05);
+    min-width: calc(var(--kds-card-font-base) * 1.8);
+    flex-shrink: 0;
+}
+.o_kds_card .o_kds_card_line_name {
+    font-size: var(--kds-card-font-base);
+    word-break: break-word;
+}
+.o_kds_card .o_kds_card_line_variant {
+    font-size: calc(var(--kds-card-font-base) * 0.78);
+    margin-left: calc(var(--kds-card-font-base) * 1.8);
+}
+.o_kds_card .o_kds_card_line_note {
+    font-size: calc(var(--kds-card-font-base) * 0.85);
+    margin-left: calc(var(--kds-card-font-base) * 1.8);
+}
+.o_kds_card .o_kds_card_lines {
+    gap: calc(var(--kds-card-font-base) * 0.5);
+    flex: 1;
+    overflow: visible;
+}
+
+/* Key config row fix — wrap on small widths */
+.o_kds_keyconfig_row,
+.o_kds_dash_key_row {
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.o_kds_keyconfig_label,
+.o_kds_dash_key_label {
+    flex: 1;
+    min-width: 80px;
+    word-break: break-word;
+}
+
+/* ==========================================================================
+   FONT SCALE — ONLY product text scales, everything else is fixed
+   ========================================================================== */
+
+/* Ensure CSS var default */
+.o_kds_app { --kds-card-font-base: 17px; }
+
+/* ── Fixed elements (NEVER scale with font) ── */
+.o_kds_card .o_kds_card_done_btn         { font-size: 15px !important; }
+.o_kds_card .o_kds_card_done_label       { font-size: 15px !important; }
+.o_kds_card .o_kds_card_recall_badge     { font-size: 11px !important; }
+.o_kds_card .o_kds_card_table            { font-size: 12px !important; }
+.o_kds_card .o_kds_card_general_note     { font-size: 13px !important; }
+.o_kds_card .o_kds_card_general_note_label { font-size: 11px !important; }
+
+/* ── Grid gap — a bit more breathing room when cards grow ── */
+.o_kds_grid {
+    gap: 14px !important;
+}
+
+/* ── Key row fix — wrap, no overflow ── */
+.o_kds_dash_key_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    padding: 8px 10px;
+    min-width: 0;
+}
+.o_kds_dash_key_label {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.o_kds_dash_keys_grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+}
+
+/* ==========================================================================
+   RECALL BADGE — absolute top-right corner, never overlaps number or timer
+   ========================================================================== */
+.o_kds_card {
+    position: relative;  /* anchor for absolute badge */
+}
+.o_kds_card .o_kds_card_recall_badge {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    border-radius: 0 var(--kds-radius-sm) 0 var(--kds-radius-sm);
+    font-size: 10px !important;
+    padding: 3px 8px;
+    letter-spacing: 0.8px;
+    z-index: 2;
 }

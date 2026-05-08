@@ -4,3 +4,5 @@ from . import kds_order
 from . import kds_order_line
 from . import pos_order
 from . import kds_order_done
+
+from . import kds_license

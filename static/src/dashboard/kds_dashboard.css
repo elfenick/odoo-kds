@@ -1,3 +1,69 @@
+.o_kds_demo_badge {
+    display: inline-block;
+    background: #f59e0b;
+    color: #1c1917;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+
+/* ============ DEMO MODE LOCKS ============ */
+.o_kds_demo_lock_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1e293b;
+    border: 1.5px dashed #475569;
+    color: #64748b;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: default;
+    margin-top: 8px;
+}
+.o_kds_demo_lock_btn_sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #1e293b;
+    border: 1.5px dashed #475569;
+    color: #64748b;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: default;
+}
+.o_kds_demo_lock_field {
+    opacity: 0.45;
+    pointer-events: none;
+    position: relative;
+}
+.o_kds_demo_lock_field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    cursor: not-allowed;
+}
+.o_kds_demo_lock_inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #1e293b;
+    border: 1.5px dashed #475569;
+    color: #64748b;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 /* ==========================================================================
    Bitópolis KDS — Dashboard (backend Odoo)
    ========================================================================== */
@@ -506,4 +572,255 @@
 @keyframes kds-fade-in {
     from { opacity: 0; transform: scale(0.95); }
     to   { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   KEY BINDINGS dentro del config editor
+   ========================================================================== */
+.o_kds_dash_keys_section {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+.o_kds_dash_keys_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.o_kds_dash_keys_title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #6b7280;
+}
+.o_kds_dash_keys_reset {
+    background: none;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    color: #9ca3af;
+    font-size: 12px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.o_kds_dash_keys_reset:hover { color: #f59e0b; border-color: #f59e0b; }
+
+.o_kds_dash_keys_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px;
+}
+.o_kds_dash_key_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: border-color 0.15s, background 0.15s;
+}
+.o_kds_dash_key_row.o_kds_dash_key_capturing {
+    border-color: #10b981;
+    background: #f0fdf9;
+    animation: kds-dash-pulse 0.9s ease-in-out infinite;
+}
+@keyframes kds-dash-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+    50%       { box-shadow: 0 0 0 4px rgba(16,185,129,0.12); }
+}
+.o_kds_dash_key_icon {
+    font-size: 16px;
+    min-width: 20px;
+    text-align: center;
+}
+.o_kds_dash_key_label {
+    flex: 1;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+}
+.o_kds_dash_key_kbd {
+    display: inline-block;
+    padding: 3px 9px;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #10b981;
+    font-family: inherit;
+    white-space: nowrap;
+}
+.o_kds_dash_key_waiting {
+    font-size: 11px;
+    color: #10b981;
+    font-style: italic;
+    flex: 1;
+}
+.o_kds_dash_key_btn {
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.o_kds_dash_key_btn:hover     { border-color: #10b981; color: #10b981; }
+.o_kds_dash_key_capturing .o_kds_dash_key_btn {
+    border-color: #ef4444; color: #ef4444;
+}
+
+/* Font size selector */
+.o_kds_dash_field_full {
+    grid-column: 1 / -1;
+}
+.o_kds_dash_font_size_row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.o_kds_dash_font_size_btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 20px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+    transition: all 0.15s;
+    min-width: 80px;
+}
+.o_kds_dash_font_size_btn:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+.o_kds_dash_font_size_active {
+    border-color: #10b981 !important;
+    background: #f0fdf9 !important;
+    color: #059669 !important;
+}
+.o_kds_dash_font_size_preview {
+    font-weight: 800;
+    color: #111827;
+    line-height: 1;
+}
+
+/* Font size custom input */
+.o_kds_dash_font_size_label    { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.o_kds_dash_font_size_label small { font-size: 10px; color: #9ca3af; font-weight: 500; }
+
+.o_kds_dash_font_size_custom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    min-width: 90px;
+}
+.o_kds_dash_font_size_custom_label {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.o_kds_dash_font_size_custom_input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.o_kds_dash_font_size_custom_input input {
+    width: 52px;
+    padding: 4px 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    font-family: inherit;
+    color: #111827;
+    outline: none;
+}
+.o_kds_dash_font_size_custom_input input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.15);
+}
+.o_kds_dash_font_size_px {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* Station action buttons */
+.o_kds_dash_station_actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 12px;
+    border-top: 1px solid #f3f4f6;
+    margin-top: auto;
+}
+.o_kds_dash_station_actions .o_kds_dash_open_btn {
+    flex: 1;
+}
+.o_kds_dash_station_edit_btn,
+.o_kds_dash_station_del_btn {
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.15s;
+    line-height: 1;
+}
+.o_kds_dash_station_edit_btn:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+.o_kds_dash_station_del_btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Censurar código de licencia */
+.o_kds_license_censored textarea,
+.o_kds_license_censored .o_field_text {
+    -webkit-text-security: disc;
+    font-family: monospace;
+    letter-spacing: 2px;
+    color: transparent;
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+    user-select: none;
+}
+.o_kds_license_censored textarea:focus,
+.o_kds_license_censored .o_field_text:focus-within {
+    -webkit-text-security: none;
+    color: inherit;
+    text-shadow: none;
+    user-select: text;
 }

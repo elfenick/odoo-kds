@@ -1,18 +1,31 @@
 {
     'name': 'Bitópolis Kitchen Display System',
-    'version': '19.0.4.0.2',
+    'version': '19.0.5.0.0',
     'category': 'Point of Sale',
-    'summary': 'KDS reactivo plug-and-play para Odoo POS — estilo Loyverse',
+    'summary': 'Kitchen Display System nativo para Odoo 19 POS — tiempo real, multi-estación y licencia por instalación',
     'description': """
-Bitópolis KDS v3
+Bitópolis KDS v5
 ================
-- Dashboard en el backend de Odoo (como POS): estaciones + configuración.
-- Ventana KDS simplificada: solo órdenes y completado.
-- Multi-estación: filtro por categoría POS configurado desde el backend.
-- Cronómetro con colores configurables desde el dashboard.
-- Bandeja de deshacer + teclado numérico USB.
-- Sonido en nueva orden (Web Audio API).
-- Tiempo real: bus.bus + polling de respaldo.
+
+Kitchen Display System nativo para Odoo 19 POS.
+Las órdenes del POS aparecen en pantalla de cocina al instante.
+
+Funcionalidades:
+- Dashboard en el backend: gestión de estaciones y configuración global.
+- Pantalla KDS standalone en /kds/ui — ideal para tablet o TV de cocina.
+- Multi-estación con filtro por categoría POS.
+- Cronómetro con colores (verde / amarillo / rojo) configurables.
+- Resaltado visual de modificadores y notas de preparación.
+- Marcar orden como lista por touch o teclado numérico USB.
+- Bandeja de deshacer para recuperar órdenes marcadas por error.
+- Sonido configurable en nueva orden (Web Audio API).
+- Tiempo real via WebSocket + polling de respaldo configurable.
+- Detección automática de desconexión con banner de alerta.
+- Recuperación automática de órdenes offline al reconectarse.
+- Sistema de licencia por instalación — pago único, sin mensualidades.
+
+Versión demo incluida: 1 estación General gratuita.
+Licencia completa: bitopolis.cc
     """,
     'author': 'Bitópolis',
     'website': 'https://bitopolis.cc',
@@ -21,6 +34,7 @@ Bitópolis KDS v3
     'data': [
         'security/ir.model.access.csv',
         'views/kds_menu_views.xml',
+        'views/kds_license_views.xml',
         'views/kds_templates.xml',
     ],
     'assets': {

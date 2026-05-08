@@ -10,3 +10,5 @@ access_kds_config_manager,kds.config manager,model_kds_config,point_of_sale.grou
 
 access_kds_order_done_user,kds.order.done user,model_kds_order_done,base.group_user,1,1,1,1
 access_kds_order_done_pos,kds.order.done pos manager,model_kds_order_done,point_of_sale.group_pos_manager,1,1,1,1
+
+access_kds_license,kds.license,model_kds_license,base.group_user,1,1,1,1

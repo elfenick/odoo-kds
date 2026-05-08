@@ -20,7 +20,11 @@
                           t-esc="state.totalPending"/>
                     <span class="o_kds_dash_stat_label">Pendientes</span>
                 </div>
-
+                <div class="o_kds_dash_stat">
+                    <span class="o_kds_dash_stat_num o_kds_ok"
+                          t-esc="state.stations.length"/>
+                    <span class="o_kds_dash_stat_label">Estaciones</span>
+                </div>
             </div>
         </div>
 
@@ -38,36 +42,18 @@
                 <div class="o_kds_dash_section">
                     <div class="o_kds_dash_section_header">
                         <h2 class="o_kds_dash_section_title">📺 Estaciones</h2>
-                        <button class="o_kds_dash_section_action"
-                                t-on-click="openStationsList">
-                            Configurar estación →
-                        </button>
+                        <t t-if="state.licenseValid">
+                            <button class="o_kds_dash_section_action"
+                                    t-on-click="openStationsList">
+                                Gestionar estaciones →
+                            </button>
+                        </t>
+                        <t t-else="">
+                            <span class="o_kds_demo_lock_btn_sm">🔒 Gestionar estaciones</span>
+                        </t>
                     </div>
 
                     <div class="o_kds_dash_station_grid">
-
-                        <!-- Tarjeta: Sin filtro (siempre visible) -->
-                        <div class="o_kds_dash_station_card">
-                            <div class="o_kds_dash_station_card_top">
-                                <div class="o_kds_dash_station_card_icon_row">
-                                    <div class="o_kds_dash_station_icon">🖥️</div>
-                                    <div class="o_kds_dash_station_pending">
-                                        <span class="o_kds_dash_station_pending_num"
-                                              t-att-class="'o_kds_dash_station_pending_num ' + pendingClass"
-                                              t-esc="state.totalPending"/>
-                                        <span class="o_kds_dash_station_pending_label">pendientes</span>
-                                    </div>
-                                </div>
-                                <div class="o_kds_dash_station_name">Vista General</div>
-                                <div class="o_kds_dash_station_cats">
-                                    <span class="o_kds_dash_cat_all">Todas las órdenes</span>
-                                </div>
-                            </div>
-                            <button class="o_kds_dash_open_btn"
-                                    t-on-click="() => this.openKds(null)">
-                                ▶ Abrir KDS
-                            </button>
-                        </div>
 
                         <!-- Tarjeta por estación -->
                         <t t-foreach="state.stations" t-as="station" t-key="station.id">
@@ -82,7 +68,12 @@
                                             <span class="o_kds_dash_station_pending_label">pendientes</span>
                                         </div>
                                     </div>
-                                    <div class="o_kds_dash_station_name" t-esc="station.name"/>
+                                    <div class="o_kds_dash_station_name">
+                                        <t t-esc="station.name"/>
+                                        <t t-if="station.is_demo">
+                                            <span class="o_kds_demo_badge"> DEMO</span>
+                                        </t>
+                                    </div>
                                     <div class="o_kds_dash_station_cats">
                                         <t t-if="station.show_all || !station.category_names.length">
                                             <span class="o_kds_dash_cat_all">Todas las categorías</span>
@@ -94,10 +85,19 @@
                                         </t>
                                     </div>
                                 </div>
-                                <button class="o_kds_dash_open_btn"
-                                        t-on-click="() => this.openKds(station.id)">
-                                    ▶ Abrir KDS
-                                </button>
+                                <div class="o_kds_dash_station_actions">
+                                    <button class="o_kds_dash_open_btn"
+                                            t-on-click="() => this.openKds(station.id, station.access_token)">
+                                        ▶ Abrir KDS
+                                    </button>
+                                    <button class="o_kds_dash_station_edit_btn"
+                                            t-on-click="() => this.openStationForm(station.id)"
+                                            title="Editar estación">✎</button>
+                                    <button class="o_kds_dash_station_del_btn"
+                                            t-if="!station.is_demo"
+                                            t-on-click="() => this.confirmDeleteStation(station.id, station.name)"
+                                            title="Eliminar estación">✕</button>
+                                </div>
                             </div>
                         </t>
 
@@ -109,7 +109,17 @@
                                 <div class="o_kds_dash_empty_sub">
                                     Crea estaciones para filtrar órdenes por área de cocina
                                 </div>
-
+                                <t t-if="state.licenseValid">
+                                    <button class="o_kds_dash_btn_primary"
+                                            t-on-click="() => this.openStationForm()">
+                                        + Nueva estación
+                                    </button>
+                                </t>
+                                <t t-else="">
+                                    <div class="o_kds_demo_lock_btn" title="Desbloquea en bitopolis.cc">
+                                        🔒 Multi-estación — Versión completa en bitopolis.cc
+                                    </div>
+                                </t>
                             </div>
                         </t>
 
@@ -149,18 +159,20 @@
                     <div t-if="state.showConfig" class="o_kds_dash_config_editor">
                         <div class="o_kds_dash_config_grid">
 
-                            <div class="o_kds_dash_field">
-                                <label>🟡 Minutos hasta Amarillo</label>
+                            <div t-att-class="'o_kds_dash_field' + (state.licenseValid ? '' : ' o_kds_demo_lock_field')">
+                                <label>🟡 Minutos hasta Amarillo <t t-if="!state.licenseValid">🔒</t></label>
                                 <input type="range" min="1" max="30"
-                                       t-model.number="state.form.warn_minutes"/>
+                                       t-model.number="state.form.warn_minutes"
+                                       t-att-disabled="!state.licenseValid"/>
                                 <span class="o_kds_dash_field_value"
                                       t-esc="state.form.warn_minutes + ' min'"/>
                             </div>
 
-                            <div class="o_kds_dash_field">
-                                <label>🔴 Minutos hasta Rojo</label>
+                            <div t-att-class="'o_kds_dash_field' + (state.licenseValid ? '' : ' o_kds_demo_lock_field')">
+                                <label>🔴 Minutos hasta Rojo <t t-if="!state.licenseValid">🔒</t></label>
                                 <input type="range" min="2" max="60"
-                                       t-model.number="state.form.danger_minutes"/>
+                                       t-model.number="state.form.danger_minutes"
+                                       t-att-disabled="!state.licenseValid"/>
                                 <span class="o_kds_dash_field_value"
                                       t-esc="state.form.danger_minutes + ' min'"/>
                             </div>
@@ -171,10 +183,14 @@
                                        t-model.number="state.form.poll_interval"/>
                             </div>
 
-                            <div class="o_kds_dash_field">
+                            <div t-if="state.licenseValid" class="o_kds_dash_field">
                                 <label>↩ Órdenes en bandeja deshacer</label>
                                 <input type="number" min="1" max="20"
                                        t-model.number="state.form.undo_count"/>
+                            </div>
+                            <div t-else="" class="o_kds_dash_field o_kds_demo_lock_field">
+                                <label>↩ Órdenes en bandeja deshacer</label>
+                                <div class="o_kds_demo_lock_inline">🔒 Solo versión completa</div>
                             </div>
 
                             <div class="o_kds_dash_field">
@@ -189,6 +205,71 @@
                                 </div>
                             </div>
 
+                            <div class="o_kds_dash_field">
+                                <label t-esc="volumeLabel"/>
+                                <input type="range" min="0.1" max="1" step="0.1"
+                                       t-model.number="state.form.sound_volume"/>
+                                <span class="o_kds_dash_field_value"
+                                      t-esc="Math.round((state.form.sound_volume || 1) * 100) + '%'"/>
+                            </div>
+
+                            <div t-att-class="'o_kds_dash_field o_kds_dash_field_full' + (state.licenseValid ? '' : ' o_kds_demo_lock_field')">
+                                <label>🔡 Tamaño de fuente en pantalla <t t-if="!state.licenseValid"> 🔒</t></label>
+                                <div class="o_kds_dash_font_size_row">
+                                    <!-- Presets rápidos -->
+                                    <t t-foreach="fontSizePresets" t-as="p" t-key="p.value">
+                                        <button class="o_kds_dash_font_size_btn"
+                                                t-att-class="{ 'o_kds_dash_font_size_active': state.form.font_size == p.value }"
+                                                t-on-click="() => state.form.font_size = p.value">
+                                            <span class="o_kds_dash_font_size_preview"
+                                                  t-att-style="'font-size:' + Math.min(p.value, 28) + 'px'">#42</span>
+                                            <span class="o_kds_dash_font_size_label">
+                                                <t t-esc="p.label"/>
+                                                <small t-esc="' (' + p.value + 'px)'"/>
+                                            </span>
+                                        </button>
+                                    </t>
+                                    <!-- Input manual -->
+                                    <div class="o_kds_dash_font_size_custom">
+                                        <span class="o_kds_dash_font_size_custom_label">Personalizado</span>
+                                        <div class="o_kds_dash_font_size_custom_input">
+                                            <input type="number" min="10" max="60" step="1"
+                                                   t-model.number="state.form.font_size"/>
+                                            <span class="o_kds_dash_font_size_px">px</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="o_kds_dash_keys_section">
+                            <div class="o_kds_dash_keys_header">
+                                <span class="o_kds_dash_keys_title">⌨ Teclas Numpad</span>
+                                <button class="o_kds_dash_keys_reset" t-on-click="() => this.resetKeys()">
+                                    ↺ Default
+                                </button>
+                            </div>
+                            <div class="o_kds_dash_keys_grid">
+                                <t t-foreach="keyBindingRows" t-as="row" t-key="row.field">
+                                    <div class="o_kds_dash_key_row"
+                                         t-att-class="{ 'o_kds_dash_key_capturing': state.capturingFor === row.field }">
+                                        <span class="o_kds_dash_key_icon" t-esc="row.icon"/>
+                                        <span class="o_kds_dash_key_label" t-esc="row.label"/>
+                                        <t t-if="state.capturingFor === row.field">
+                                            <span class="o_kds_dash_key_waiting">Presiona una tecla… (Esc cancela)</span>
+                                        </t>
+                                        <t t-else="">
+                                            <kbd class="o_kds_dash_key_kbd"
+                                                 t-esc="keyLabel(state.form[row.field])"/>
+                                        </t>
+                                        <button class="o_kds_dash_key_btn"
+                                                t-on-click="() => this.startCapture(row.field)">
+                                            <t t-if="state.capturingFor === row.field">Cancelar</t>
+                                            <t t-else="">Cambiar</t>
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
                         </div>
 
                         <div class="o_kds_dash_config_footer">

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import secrets
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
 
 
 class KdsStation(models.Model):
@@ -26,33 +26,37 @@ class KdsStation(models.Model):
         'Mostrar todas las categorías', default=False,
         help='Ignora el filtro y muestra todas las órdenes.',
     )
+    access_token = fields.Char(
+        string='Token de Acceso', readonly=True, copy=False,
+        help='Token único para acceder al KDS. Se genera automáticamente.',
+    )
     active = fields.Boolean(default=True)
     color = fields.Integer(default=0)
 
-    # ------------------------------------------------------------------
-    # Constraints — máximo 1 estación por empresa, máx 2 categorías
-    # ------------------------------------------------------------------
-    @api.constrains('pos_category_ids')
-    def _check_max_categories(self):
-        for rec in self:
-            if len(rec.pos_category_ids) > 2:
-                raise ValidationError(
-                    'Solo se pueden asignar máximo 2 categorías por estación.'
-                )
-
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            company_id = vals.get('company_id', self.env.company.id)
-            existing = self.sudo().search_count([
-                ('company_id', '=', company_id),
-                ('active', 'in', [True, False]),
-            ])
-            if existing >= 1:
-                raise ValidationError(
-                    'Solo se puede configurar 1 estación KDS por empresa.'
+        try:
+            lic_status = self.env['kds.license'].sudo().get_license_status()
+            if not lic_status.get('valid', False):
+                from odoo.exceptions import UserError
+                raise UserError(
+                    '🔒 Se requiere licencia activa para crear estaciones.\n'
+                    'Activa tu licencia en Cocina → Licencia → Validar\n'
+                    'o adquiere una en bitopolis.cc'
                 )
+        except Exception as e:
+            if 'licencia' in str(e).lower() or 'UserError' in type(e).__name__:
+                raise
+            # Si kds.license no existe todavía, permitir (primera instalación)
+        for vals in vals_list:
+            if not vals.get('access_token'):
+                vals['access_token'] = secrets.token_urlsafe(32)
         return super().create(vals_list)
+
+    def action_regenerate_token(self):
+        """Regenera el token de acceso (invalida URLs anteriores)."""
+        for rec in self:
+            rec.access_token = secrets.token_urlsafe(32)
 
     # ------------------------------------------------------------------
     # API para OWL — sudo() para evitar problemas de ACL en la BD
@@ -67,6 +71,7 @@ class KdsStation(models.Model):
             'name': s.name,
             'show_all': s.show_all,
             'has_categories': bool(s.pos_category_ids),
+            'access_token': s.access_token,
         } for s in stations]
 
     # ------------------------------------------------------------------
