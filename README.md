@@ -44,9 +44,10 @@ Plug & play. Cero configuración.
 - **Estilos:** todo en `static/src/app/kds_app.scss` (variables al inicio).
 - **Polling:** `POLL_INTERVAL_MS` en `static/src/app/kds_app.js`.
 
-## Soporte
+## Soporte y compra de licencia
 
 [bitopolis.cc](https://bitopolis.cc)
+[Versión premium](https://tienda.bitopolis.cc/kitchen-display-system)
 
 ## Licencia
 
